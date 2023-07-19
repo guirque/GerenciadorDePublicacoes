@@ -1,9 +1,9 @@
 public class Revista extends Publicacao {
 
-    private String periodicidade;
-    public Revista(String nome, String assunto, String edicao, Editora editora, String[] autores, String peridiocidade)
+    public String periodicidade;
+    public Revista(String nome, String assunto, String edicao, Editora editora, String peridiocidade)
     {
-        super(nome, assunto, edicao, editora, autores);
+        super(nome, assunto, edicao, editora);
         this.periodicidade = peridiocidade;
     }
 }

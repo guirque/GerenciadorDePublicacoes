@@ -4,10 +4,9 @@ public class index
     {
         new GUI();
         System.out.println("Hello, World!");
-
+        /*
         Editora a = new Editora("a", "aaaa");
-        Revista umaRevista = new Revista("Hey", "Nada", "p1", a, new String[2], "mensalmente");
-        
+        Revista umaRevista = new Revista("Hey", "Nada", "p1", a, "mensalmente");
         
         //umaRevista.salvar("armazenamento.bin");
         Revista resgatada = (Revista) Publicacao.importarPub("armazenamento.bin");
@@ -15,7 +14,7 @@ public class index
 
         //umaRevista.salvar("a.bin");
         Revista b = (Revista) Publicacao.importarPub("a.bin");
-         System.out.println(b.editora.numPublicacoes);
-
+        System.out.println(b.editora.numPublicacoes);
+        */
     }
 }

@@ -10,14 +10,13 @@ public class Publicacao implements Serializable {
     //Atencao: serialVersionUID caracteriza a versao da classe. Esse valor deve ser atualizado manualmente, a fim de
     //evitar erros de serializacao/desserializacao.
 
-    public Publicacao(String nome, String assunto, String edicao, Editora editora, String[] autores)
+    public Publicacao(String nome, String assunto, String edicao, Editora editora)
     {
         this.nome = nome;
         this.assunto = assunto;
         this.edicao = edicao;
         this.editora = editora;
         this.editora.numPublicacoes++;
-        this.autores = autores;
     }
 
     /**
