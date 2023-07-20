@@ -41,10 +41,16 @@ public class GUI implements ActionListener
 
     JLabel infoEditora;
 
+    //Saving
+    JTextField savePath;
+
     //Publicacoes
     JList<String> publicacoesVisiveis;
     DefaultListModel<String> modelPublicacoes = new DefaultListModel<String>(); //Allows us to update list visually and directly
     JLabel infoPublicacoes;
+
+    //Error
+    JLabel error;
 
     //GUI Setup
     public GUI()
@@ -52,7 +58,7 @@ public class GUI implements ActionListener
         //Setting frame
         window = new JFrame("Gerenciador de Publicações");
         window.pack();
-        window.setSize(new Dimension(500, 500));
+        window.setSize(new Dimension(900, 600));
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         //Setting Main Panel
@@ -71,7 +77,6 @@ public class GUI implements ActionListener
         formsBox.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         JPanel forms = new JPanel();
         Dimension minimumFormsSize = new Dimension(500, 0);
-        Insets formsMargin = new Insets(20, 10, 20, 20);
         forms.setLayout(new GridBagLayout());
         formsBox.setBackground(defaultColor);
         formsBox.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, new Color(30, 30, 30)));
@@ -92,29 +97,15 @@ public class GUI implements ActionListener
         option.add(livro);
 
         nome = new JTextField("Um nome");
-        nome.setMinimumSize(minimumFormsSize);
-        //nome.setMaximumSize(formsSize);
 
         assunto = new JTextField("Um assunto");
-        //assunto.setMaximumSize(formsSize);
         assunto.setMinimumSize(minimumFormsSize);
-        assunto.setMargin(formsMargin);
 
         edicao = new JTextField("Uma edição");
-        //edicao.setMaximumSize(formsSize);
-        edicao.setMinimumSize(minimumFormsSize);
-        edicao.setMargin(formsMargin);
 
         editorasJList = new JList<String>(modelEditoras);
-        editorasJList.setMinimumSize(minimumFormsSize);
-        //editoras.setMaximumSize(formsSize);
 
         JButton submit = new JButton("Insert");
-        submit.setMinimumSize(minimumFormsSize);
-        //submit.setMaximumSize(formsSize);
-        submit.setMargin(formsMargin);
-
-        //JButton savePub = new JButton("Salvar");
 
         GridBagConstraints insertGrid = new GridBagConstraints();
         insertGrid.gridy = 0; insertGrid.gridwidth = 2;
@@ -161,13 +152,36 @@ public class GUI implements ActionListener
         textFieldGrid.gridx = 1;
         forms.add(differentField, textFieldGrid);
 
-        textFieldGrid.gridx = 1;
+        JPanel salvarPanel = new JPanel();
+        salvarPanel.setLayout(new BoxLayout(salvarPanel, 1));
+        JSeparator separatorS = new JSeparator(JSeparator.HORIZONTAL);
+        JLabel tituloSalvar = new JLabel("Salvar Em Arquivo");
+        tituloSalvar.setHorizontalAlignment(SwingConstants.CENTER);
+        JButton saveButton = new JButton("Salvar");
+        saveButton.addActionListener(this);
+        saveButton.setActionCommand("salvarPub");
+        JLabel caminhoSalvar = new JLabel("Caminho (sem aspas): ");
+        savePath = new JTextField();
+
+        salvarPanel.add(separatorS);
+        salvarPanel.add(tituloSalvar);
+        salvarPanel.add(caminhoSalvar);
+        salvarPanel.add(savePath);
+        salvarPanel.add(saveButton);
+        salvarPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+
+        textFieldGrid.gridx = 0;
         textFieldGrid.gridy = 7;
-        submit.setPreferredSize(new Dimension(100, 40));
+        textFieldGrid.gridwidth = 2;
+
         submit.setHorizontalAlignment(SwingConstants.CENTER);
         submit.addActionListener(this);
         submit.setActionCommand("Submit");
         forms.add(submit, textFieldGrid);
+
+        textFieldGrid.gridx = 0;
+        textFieldGrid.gridy = 8;
+        forms.add(salvarPanel, textFieldGrid);
 
         //Left Panel ---------------------------------------------------------
         JPanel leftPanelBox = new JPanel();
@@ -203,8 +217,9 @@ public class GUI implements ActionListener
         //Creating Publisher --------------------------------------------------
         JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
         JLabel tituloEditora = new JLabel("Criar Editora");
+        tituloEditora.setHorizontalAlignment(SwingConstants.CENTER);
         tituloEditora.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 10));
-        leftPanel.add(separator);
+        importPanel.add(separator);
         leftPanel.add(tituloEditora);
 
         importPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 10));
@@ -223,6 +238,20 @@ public class GUI implements ActionListener
         editoraPanel.add(submitEditora);
 
         leftPanel.add(editoraPanel);
+
+        JPanel errorMsgs = new JPanel();
+        errorMsgs.setLayout(new BoxLayout(errorMsgs, 1));
+        JSeparator separator3 = new JSeparator(0);
+        JLabel errorTitle = new JLabel("Erros"); 
+        errorTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        error = new JLabel("<html>Nenhum erro encontrado até o momento.</html>");
+        errorMsgs.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+        
+        errorMsgs.add(separator3); 
+        errorMsgs.add(errorTitle);
+        errorMsgs.add(error);
+
+        leftPanel.add(errorMsgs);
 
         //Center Panels ------------------------------------------------------
         JPanel centerPanelBox = new JPanel();
@@ -265,6 +294,7 @@ public class GUI implements ActionListener
         publicacoesVisiveis.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent event)
             {
+                try{
                 int pubIndex = publicacoesVisiveis.getSelectedIndex();
                 if(pubIndex!= -1 && publicacoes[pubIndex].getClass().equals(Livro.class)){
                     Livro valueLabel = (Livro) publicacoes[pubIndex];
@@ -280,6 +310,10 @@ public class GUI implements ActionListener
                     Revista valueLabel = (Revista) publicacoes[pubIndex];
                     infoPublicacoes.setText("<html>Nome: " + valueLabel.nome + "<br/>Edição: \n" + valueLabel.edicao + "<br/>Assunto: " + valueLabel.assunto + "<br/>Editora: " + valueLabel.editora.nome +"<br/>Peridiocidade: " + valueLabel.periodicidade + "</html>");
                 }
+            }catch(Exception o)
+            {
+                System.out.println("<!> Error displaying Publicacoes: " + o);
+            }
             }
         });
         publicacoesCenterPanel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, new Color(0, 0, 0)));
@@ -309,6 +343,7 @@ public class GUI implements ActionListener
                 break;
             case "Submit":
                 Publicacao novo;
+                try{
                 int indexEditora = editorasJList.getSelectedIndex();
                 if(indexEditora != -1){
                     if(option.isSelected(revista.getModel())) novo = new Revista(nome.getText(), assunto.getText(), edicao.getText(), editoras[indexEditora], differentField.getText());
@@ -319,20 +354,46 @@ public class GUI implements ActionListener
                     publicacoes[publicacoesI] = novo;
                     modelPublicacoes.add(publicacoesI, novo.nome);
                     publicacoesI++;
+                }}
+                catch(Exception o)
+                {
+                    error.setText("<html><p>Error ao inserir nova publicação.</p> <p>Certifique-se que todos os campos estão preenchidos.</p></html>");
+                    System.out.println("<!> Error with submission: " + o);
                 }
                 break;
             case "Import":
                 fileChooser.showOpenDialog(window);
                 break;
             case "importPub":
-                File importMe = fileChooser.getSelectedFile();
-                if(importMe.exists()){
-                    Publicacao pubImportada = Publicacao.importarPub(importMe.getAbsolutePath());
-                    publicacoes[publicacoesI] = pubImportada;
-                    modelPublicacoes.add(publicacoesI, pubImportada.nome);
-                    publicacoesI++;
-            }
+                try{
+                    File importMe = fileChooser.getSelectedFile();
+                    if(importMe.exists()){
+                        Publicacao pubImportada = Publicacao.importarPub(importMe.getAbsolutePath());
+                        publicacoes[publicacoesI] = pubImportada;
+                        modelPublicacoes.add(publicacoesI, pubImportada.nome);
+                        publicacoesI++;
+                    }
+                }
+                catch(Exception o)
+                {
+                    error.setText("<html><p>Error ao importar publicação.</p> <p>Certifique-se que o arquivo escolhido é o correto.</p></html>");
+                    System.out.println("<!> Error with importing file: " + o);
+                }
                 break;
+            case "salvarPub":
+                Publicacao novaPub;
+                if(editorasJList.getSelectedIndex() != -1){
+                    if(option.isSelected(revista.getModel()))
+                    {
+                        novaPub = new Revista(nome.getText(), assunto.getText(), edicao.getText(), editoras[editorasJList.getSelectedIndex()], differentField.getText());
+                    }
+                    else
+                    {
+                        novaPub = new Livro(nome.getText(), assunto.getText(), edicao.getText(), editoras[editorasJList.getSelectedIndex()], differentField.getText().split(","));
+                    }
+                    novaPub.salvar(savePath.getText());
+                }
+                        break;
             case "SEditora":
 
                 String nomeEditora = nomeEditoraTexto.getText();
