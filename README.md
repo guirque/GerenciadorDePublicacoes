@@ -1,6 +1,7 @@
 # Gerenciador de Publicações
-<h2>Proposta</h2>
-<p>Realizado para o <a href="https://github.com/carlosbazilio/trabalho_lp">Segundo Trabalho de Implementação</a> da disciplina de Linguagens de Programação, com o professor <a href="https://github.com/carlosbazilio">Carlos Bazilio</a>: Questão 9.</p>
+<h2>Sobre</h2>
+<h3>Proposta</h3>
+<p>Realizado para o <a href="https://github.com/carlosbazilio/trabalho_lp">Segundo Trabalho de Implementação</a> (Questão 9) da disciplina de Linguagens de Programação, com o professor <a href="https://github.com/carlosbazilio">Carlos Bazilio</a>.</p>
 <p>O aplicativo permite criar instâncias de livros, revistas e editoras, com as informações principais desses tópicos. É possível armazenar as publicações criadas em arquivos (binários), para acesso posterior, e importá-los para visualização de dados como nome, edição, assunto, entre outros.</p>
 <h3>Grupo</h3>
 <p>Guilherme Rodrigues, Luiz Eduardo Pantaleão.</p>
